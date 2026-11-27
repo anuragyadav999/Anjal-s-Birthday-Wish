@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday | Anjal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Design tokens & glassmorphism theme */
+        :root {
+            --bg-dark: #090d16;
+            --accent-primary: #818cf8;
+            --accent-secondary: #c084fc;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 10%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 20%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 22%, 1) 0, transparent 50%);
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #f8fafc;
+            padding: 2.5rem 1.5rem 4rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2300;
+        }
+
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            filter: blur(140px);
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.22;
+            top: 20%;
+            left: 30%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(129, 140, 248, 0.15);
+            border: 1px solid var(--accent-primary);
+            border-radius: 100px;
+            color: var(--accent-primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.2;
+        }
+
+        .name-gradient {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Category Filter Bar */
+        .category-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .cat-btn {
+            padding: 10px 20px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(12px);
+        }
+
+        .cat-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .cat-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(129, 140, 248, 0.4);
+        }
+
+        /* 3-Column Grid */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .col-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .cat-tag {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(192, 132, 252, 0.16);
+            border: 1px solid rgba(192, 132, 252, 0.4);
+            color: #e9d5ff;
+            text-transform: none;
+            letter-spacing: 0.2px;
+            font-weight: 600;
+        }
+
+        /* Card Panel */
+        .card-panel {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 1.5rem;
+        }
+
+        /* Photo Columns */
+        .photo-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .photo-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            aspect-ratio: 4 / 5;
+            min-height: 280px;
+            background: rgba(15, 23, 42, 0.72);
+            display: block;
+            opacity: 1;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-secondary);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 1;
+        }
+
+        .photo-upload-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 5;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: rgba(9, 13, 22, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #f8fafc;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .photo-upload-badge:hover {
+            background: rgba(129, 140, 248, 0.85);
+            border-color: #ffffff;
+        }
+
+        .media-caption {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            padding: 6px 12px;
+            border-radius: 12px;
+            background: rgba(9, 13, 22, 0.78);
+            backdrop-filter: blur(8px);
+            font-size: 0.78rem;
+            color: #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        /* Center Column */
+        .center-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .message-card {
+            padding: 2.2rem;
+            text-align: center;
+        }
+
+        .message-card p {
+            color: #e2e8f0;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 1.8rem;
+        }
+
+        .btn-main {
+            padding: 14px 34px;
+            background: white;
+            color: #090d16;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 20;
+        }
+
+        .btn-main:hover,
+        .btn-main.active-magic {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 28px rgba(192, 132, 252, 0.65);
+        }
+
+        /* Pop-out Magic Banner */
+        .magic-popup {
+            position: fixed;
+            top: 28px;
+            left: 50%;
+            transform: translate(-50%, -140%) scale(0.75);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2500;
+            padding: 14px 28px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(129, 140, 248, 0.96), rgba(192, 132, 252, 0.96));
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            letter-spacing: 0.5px;
+            box-shadow: 0 18px 45px rgba(129, 140, 248, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+            white-space: nowrap;
+        }
+
+        .magic-popup.show {
+            transform: translate(-50%, 0) scale(1);
+            opacity: 1;
+        }
+
+        .magic-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2400;
+            font-size: 1.55rem;
+            animation: magicBurst 1.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes magicBurst {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.35) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, -150px))) scale(1.4) rotate(var(--rot, 180deg));
+            }
+        }
+
+        /* Video Cards & Controls */
+        .video-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #000;
+            aspect-ratio: 9 / 16;
+            max-height: 520px;
+            margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #000;
+        }
+
+        .video-controls-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .video-status {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            flex: 1 1 auto;
+        }
+
+        .video-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-pill {
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-pill:hover {
+            border-color: var(--accent-primary);
+            background: rgba(129, 140, 248, 0.2);
+            color: #ffffff;
+        }
+
+        .action-pill.demo-active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-color: transparent;
+            color: #ffffff;
+        }
+
+        /* Lightbox Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.94);
+            backdrop-filter: blur(12px);
+            z-index: 2600;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Floating Background Emojis */
+        .bg-item {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.15;
+            animation: drift var(--drift-duration, 15s) var(--drift-delay, 0s) infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 110vh) rotate(0deg); }
+            100% { transform: translate(0, -10vh) rotate(360deg); }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .grid-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+            .center-column {
+                grid-column: span 2;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+            .center-column {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob"></div>
+    <div id="bg-canvas"></div>
+    <canvas id="confetti-canvas"></canvas>
+    <div id="magicPopup" class="magic-popup" aria-live="polite">✨ Happy Birthday, Anjal! 🎉</div>
+
+    <div class="container">
+        <header>
+            <div class="badge">Celebration Mode On</div>
+            <h1>Happy Birthday, <span class="name-gradient">my dearest sister Anjal</span></h1>
+        </header>
+
+        <!-- Category Filter Buttons -->
+        <nav class="category-bar" id="categoryBar" aria-label="Birthday Categories">
+            <button type="button" class="cat-btn active" data-category="all">✨ All Memories</button>
+            <button type="button" class="cat-btn" data-category="ethnic-portraits">🌸 Ethnic &amp; Festive</button>
+            <button type="button" class="cat-btn" data-category="formal-casual">💼 Formal &amp; Everyday</button>
+            <button type="button" class="cat-btn" data-category="sibling-fun">😂 Sibling Fun</button>
+            <button type="button" class="cat-btn" data-category="heartfelt-reels">💖 Special Reel</button>
+        </nav>
+
+        <div class="grid-layout">
+
+            <!-- Left Photo Column -->
+            <div class="photo-stack">
+                <div class="col-header">📸 Photos</div>
+
+                <div class="photo-card media-item" data-category="ethnic-portraits" data-title="Purple Saree Look" data-subtitle="Ethnic & Festive" data-img-src="IMG_20261127_094828_2.jpg" data-fallback="IMG_20261127_094828.jpg">
+                    <button type="button" class="photo-upload-badge" title="Choose local photo">📷 Photo</button>
+                    <input type="file" accept="image/*" class="local-photo-input" style="display:none;">
+                    <img src="IMG_20261127_094828_2.jpg" alt="Anjal in purple saree with statement jewelry">
+                    <div class="media-caption">
+                        <span>Purple Saree Look</span>
+                        <span class="cat-tag">Ethnic &amp; Festive</span>
+                    </div>
+                </div>
+
+                <div class="photo-card media-item" data-category="ethnic-portraits" data-title="Floral Dupatta" data-subtitle="Ethnic & Festive" data-img-src="IMG_20261127_110431_2.jpg" data-fallback="IMG_20261127_110431.jpg">
+                    <button type="button" class="photo-upload-badge" title="Choose local photo">📷 Photo</button>
+                    <input type="file" accept="image/*" class="local-photo-input" style="display:none;">
+                    <img src="IMG_20261127_110431_2.jpg" alt="Anjal wearing floral dupatta">
+                    <div class="media-caption">
+                        <span>Floral Dupatta</span>
+                        <span class="cat-tag">Ethnic &amp; Festive</span>
+                    </div>
+                </div>
+
+                <div class="photo-card media-item" data-category="ethnic-portraits" data-title="Green Saree Moment" data-subtitle="Ethnic & Festive" data-img-src="IMG_20261127_110316_2.jpg" data-fallback="IMG_20261127_110316.jpg">
+                    <button type="button" class="photo-upload-badge" title="Choose local photo">📷 Photo</button>
+                    <input type="file" accept="image/*" class="local-photo-input" style="display:none;">
+                    <img src="IMG_20261127_110316_2.jpg" alt="Anjal in green patterned saree">
+                    <div class="media-caption">
+                        <span>Green Saree Moment</span>
+                        <span class="cat-tag">Ethnic &amp; Festive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Column -->
+            <div class="center-column">
+
+                <div>
+                    <div class="col-header">💌 Message</div>
+                    <div class="card-panel message-card">
+                        <p>No matter how old we get or how busy life gets, I will always be your biggest cheerleader, your favorite person to annoy, and the first one cheering loudest when every single one of your big dreams comes true.</p>
+                        <button type="button" id="magicBtn" class="btn-main">Unleash Magic ✨</button>
+                    </div>
+                </div>
+
+                <div class="video-block media-item" data-category="sibling-fun" data-label="Siblings Fun" data-demo-emoji="😂">
+                    <div class="col-header">
+                        <span>🎬 Video 1: Siblings Fun</span>
+                        <span class="cat-tag">Sibling Fun</span>
+                    </div>
+                    <div class="video-card">
+                        <video controls playsinline preload="metadata">
+                            <source src="Siblings fun_2.mp4" type="video/mp4">
+                            <source src="Siblings fun.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-controls-bar">
+                        <span class="video-status">Ready • Select local file or Demo Preview if offline</span>
+                        <div class="video-actions">
+                            <button type="button" class="action-pill demo-btn">▶ Demo Preview</button>
+                            <label class="action-pill">
+                                📁 Load Video
+                                <input type="file" accept="video/*" class="local-video-input" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-block media-item" data-category="sibling-fun" data-label="Serious Dhoka" data-demo-emoji="🤣">
+                    <div class="col-header">
+                        <span>😂 Video 2: Serious Dhoka</span>
+                        <span class="cat-tag">Sibling Fun</span>
+                    </div>
+                    <div class="video-card">
+                        <video controls playsinline preload="metadata">
+                            <source src="Serious dhoka_2.mp4" type="video/mp4">
+                            <source src="Serious dhoka.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-controls-bar">
+                        <span class="video-status">Ready • Select local file or Demo Preview if offline</span>
+                        <div class="video-actions">
+                            <button type="button" class="action-pill demo-btn">▶ Demo Preview</button>
+                            <label class="action-pill">
+                                📁 Load Video
+                                <input type="file" accept="video/*" class="local-video-input" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-block media-item" data-category="sibling-fun" data-label="Every Time We Met" data-demo-emoji="🎀">
+                    <div class="col-header">
+                        <span>🎀 Video 3: Every Time We Met</span>
+                        <span class="cat-tag">Sibling Fun</span>
+                    </div>
+                    <div class="video-card">
+                        <video controls playsinline preload="metadata">
+                            <source src="Every time we met_2.mp4" type="video/mp4">
+                            <source src="Every time we met.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-controls-bar">
+                        <span class="video-status">Ready • Select local file or Demo Preview if offline</span>
+                        <div class="video-actions">
+                            <button type="button" class="action-pill demo-btn">▶ Demo Preview</button>
+                            <label class="action-pill">
+                                📁 Load Video
+                                <input type="file" accept="video/*" class="local-video-input" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-block media-item" data-category="heartfelt-reels" data-label="Me To My Sister" data-demo-emoji="💖">
+                    <div class="col-header">
+                        <span>💖 Video 4: Me To My Sister</span>
+                        <span class="cat-tag">Special Reel</span>
+                    </div>
+                    <div class="video-card">
+                        <video controls playsinline preload="metadata">
+                            <source src="Me to my sister_2.mp4" type="video/mp4">
+                            <source src="Me to my sister.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-controls-bar">
+                        <span class="video-status">Ready • Select local file or Demo Preview if offline</span>
+                        <div class="video-actions">
+                            <button type="button" class="action-pill demo-btn">▶ Demo Preview</button>
+                            <label class="action-pill">
+                                📁 Load Video
+                                <input type="file" accept="video/*" class="local-video-input" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Photo Column -->
+            <div class="photo-stack">
+                <div class="col-header">📸 Photos</div>
+
+                <div class="photo-card media-item" data-category="ethnic-portraits" data-title="Yellow & Teal Look" data-subtitle="Ethnic & Festive" data-img-src="IMG_20261127_094440_2.jpg" data-fallback="IMG_20261127_094440.jpg">
+                    <button type="button" class="photo-upload-badge" title="Choose local photo">📷 Photo</button>
+                    <input type="file" accept="image/*" class="local-photo-input" style="display:none;">
+                    <img src="IMG_20261127_094440_2.jpg" alt="Anjal in yellow kurta and teal dupatta">
+                    <div class="media-caption">
+                        <span>Yellow &amp; Teal Look</span>
+                        <span class="cat-tag">Ethnic &amp; Festive</span>
+                    </div>
+                </div>
+
+                <div class="photo-card media-item" data-category="formal-casual" data-title="Blazer Look" data-subtitle="Formal & Everyday" data-img-src="IMG_20261127_094638.jpg" data-fallback="">
+                    <button type="button" class="photo-upload-badge" title="Choose local photo">📷 Photo</button>
+                    <input type="file" accept="image/*" class="local-photo-input" style="display:none;">
+                    <img src="IMG_20261127_094638.jpg" alt="Anjal in a sharp black blazer suit">
+                    <div class="media-caption">
+                        <span>Blazer Look</span>
+                        <span class="cat-tag">Formal &amp; Everyday</span>
+                    </div>
+                </div>
+
+                <div class="photo-card media-item" data-category="formal-casual" data-title="Everyday Snap" data-subtitle="Formal & Everyday" data-img-src="IMG_20261127_110648.jpg" data-fallback="">
+                    <button type="button" class="photo-upload-badge" title="Choose local photo">📷 Photo</button>
+                    <input type="file" accept="image/*" class="local-photo-input" style="display:none;">
+                    <img src="IMG_20261127_110648.jpg" alt="Anjal indoor portrait">
+                    <div class="media-caption">
+                        <span>Everyday Snap</span>
+                        <span class="cat-tag">Formal &amp; Everyday</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="modal" id="imageModal" role="dialog" aria-modal="true" aria-label="Photo Preview">
+        <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close preview">&times;</button>
+        <img id="modalImg" src="" alt="Expanded preview">
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+
+            // Generate a rich <canvas> illustrated portrait fallback when a photo file isn't available locally
+            function createCanvasPortraitFallback(title, subtitle, paletteIndex) {
+                const palettes = [
+                    { start: "#311042", mid: "#6b21a8", end: "#c084fc", accent: "#f3e8ff", icon: "💜" },
+                    { start: "#1e1b4b", mid: "#4338ca", end: "#a855f7", accent: "#fbcfe8", icon: "🌸" },
+                    { start: "#064e3b", mid: "#047857", end: "#818cf8", accent: "#d1fae5", icon: "🌿" },
+                    { start: "#422006", mid: "#b45309", end: "#c084fc", accent: "#fef3c7", icon: "✨" },
+                    { start: "#0f172a", mid: "#334155", end: "#818cf8", accent: "#e2e8f0", icon: "💼" },
+                    { start: "#1e1b4b", mid: "#581c87", end: "#ec4899", accent: "#fce7f3", icon: "🎂" }
+                ];
+                const pal = palettes[paletteIndex % palettes.length];
+
+                const c = document.createElement("canvas");
+                c.width = 640;
+                c.height = 800;
+                const ctx = c.getContext("2d");
+                if (!ctx) return "";
+
+                const bgGrad = ctx.createLinearGradient(0, 0, 640, 800);
+                bgGrad.addColorStop(0, pal.start);
+                bgGrad.addColorStop(0.55, pal.mid);
+                bgGrad.addColorStop(1, pal.end);
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, 640, 800);
+
+                // Soft decorative glow rings
+                ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+                ctx.beginPath();
+                ctx.arc(320, 310, 145, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.22)";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(320, 310, 118, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Styled portrait silhouette & emblem
+                ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+                ctx.beginPath();
+                ctx.arc(320, 275, 58, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(320, 415, 92, Math.PI, 0);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.font = "64px sans-serif";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(pal.icon, 320, 278);
+
+                // Title & birthday label
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 36px sans-serif";
+                ctx.fillText(title || "Anjal's Memory", 320, 505);
+
+                ctx.fillStyle = pal.accent;
+                ctx.font = "600 22px sans-serif";
+                ctx.fillText(subtitle || "Happy Birthday Anjal", 320, 550);
+
+                ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+                ctx.font = "18px sans-serif";
+                ctx.fillText("Click 📷 Photo to attach local image", 320, 595);
+
+                try {
+                    return c.toDataURL("image/png");
+                } catch (err) {
+                    return "";
+                }
+            }
+
+            // Ensure all 6 photo cards render visibly on initial load with guaranteed canvas fallback
+            function initImages() {
+                const cards = document.querySelectorAll(".photo-card");
+
+                cards.forEach(function (card, idx) {
+                    card.style.display = "block";
+                    card.style.opacity = "1";
+
+                    const img = card.querySelector("img");
+                    const uploadBtn = card.querySelector(".photo-upload-badge");
+                    const fileInput = card.querySelector(".local-photo-input");
+                    const title = card.getAttribute("data-title") || ("Photo " + (idx + 1));
+                    const subtitle = card.getAttribute("data-subtitle") || "Happy Birthday Anjal";
+                    const fallbackSrc = card.getAttribute("data-fallback") || "";
+                    const canvasFallback = createCanvasPortraitFallback(title, subtitle, idx);
+
+                    function applyCanvasFallback() {
+                        if (img && canvasFallback && img.src !== canvasFallback) {
+                            img.dataset.usingFallback = "true";
+                            img.src = canvasFallback;
+                        }
+                    }
+
+                    if (img) {
+                        img.style.display = "block";
+                        img.style.opacity = "1";
+
+                        img.addEventListener("error", function onImgError() {
+                            if (fallbackSrc && !img.dataset.triedPrimaryFallback) {
+                                img.dataset.triedPrimaryFallback = "true";
+                                img.src = fallbackSrc;
+                                return;
+                            }
+                            applyCanvasFallback();
+                        });
+
+                        if (img.complete && img.naturalWidth === 0) {
+                            if (fallbackSrc && !img.dataset.triedPrimaryFallback) {
+                                img.dataset.triedPrimaryFallback = "true";
+                                img.src = fallbackSrc;
+                            } else {
+                                applyCanvasFallback();
+                            }
+                        }
+                    }
+
+                    if (uploadBtn && fileInput) {
+                        uploadBtn.addEventListener("click", function (e) {
+                            e.stopPropagation();
+                            fileInput.click();
+                        });
+
+                        fileInput.addEventListener("change", function () {
+                            const file = fileInput.files && fileInput.files[0];
+                            if (!file || !img) return;
+                            const url = URL.createObjectURL(file);
+                            img.dataset.usingFallback = "false";
+                            img.src = url;
+                        });
+                    }
+
+                    card.addEventListener("click", function () {
+                        const modal = document.getElementById("imageModal");
+                        const modalImg = document.getElementById("modalImg");
+                        if (modal && modalImg && img) {
+                            modalImg.src = img.currentSrc || img.src || canvasFallback;
+                            modal.classList.add("active");
+                        }
+                    });
+                });
+            }
+
+            // Lightbox modal close handlers
+            function initLightbox() {
+                const modal = document.getElementById("imageModal");
+                const closeBtn = document.getElementById("modalCloseBtn");
+
+                if (closeBtn) {
+                    closeBtn.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        if (modal) modal.classList.remove("active");
+                    });
+                }
+
+                if (modal) {
+                    modal.addEventListener("click", function (e) {
+                        if (e.target === modal) {
+                            modal.classList.remove("active");
+                        }
+                    });
+                }
+
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape" && modal && modal.classList.contains("active")) {
+                        modal.classList.remove("active");
+                    }
+                });
+            }
+
+            // Category filtering using explicit display toggle
+            function initCategories() {
+                const categoryBar = document.getElementById("categoryBar");
+                if (!categoryBar) return;
+
+                categoryBar.addEventListener("click", function (e) {
+                    const btn = e.target.closest(".cat-btn");
+                    if (!btn) return;
+
+                    const selected = btn.getAttribute("data-category") || "all";
+                    const allButtons = categoryBar.querySelectorAll(".cat-btn");
+                    allButtons.forEach(function (b) {
+                        b.classList.toggle("active", b === btn);
+                    });
+
+                    const items = document.querySelectorAll(".media-item");
+                    items.forEach(function (item) {
+                        const itemCat = item.getAttribute("data-category") || "";
+                        const shouldShow = selected === "all" || itemCat === selected;
+                        item.style.display = shouldShow ? "block" : "none";
+                        item.style.opacity = shouldShow ? "1" : "";
+                    });
+                });
+            }
+
+            // Built-in Canvas confetti engine (no external CDN required)
+            function runBuiltInConfetti(durationMs) {
+                const canvas = document.getElementById("confetti-canvas");
+                if (!canvas) return;
+                const ctx = canvas.getContext("2d");
+                if (!ctx) return;
+
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const colors = ["#818cf8", "#c084fc", "#38bdf8", "#f472b6", "#facc15"];
+                const pieces = [];
+                for (let i = 0; i < 110; i++) {
+                    pieces.push({
+                        x: Math.random() * canvas.width,
+                        y: -20 - Math.random() * canvas.height * 0.4,
+                        w: 7 + Math.random() * 8,
+                        h: 5 + Math.random() * 6,
+                        vx: (Math.random() - 0.5) * 5,
+                        vy: 2.5 + Math.random() * 4.5,
+                        angle: Math.random() * Math.PI * 2,
+                        vAngle: (Math.random() - 0.5) * 0.2,
+                        color: colors[i % colors.length]
+                    });
+                }
+
+                const startTime = Date.now();
+                let animId = null;
+
+                function step() {
+                    const elapsed = Date.now() - startTime;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    pieces.forEach(function (p) {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.angle += p.vAngle;
+
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.angle);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        ctx.restore();
+                    });
+
+                    if (elapsed < durationMs) {
+                        animId = requestAnimationFrame(step);
+                    } else {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        if (animId) cancelAnimationFrame(animId);
+                    }
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            // Pop-out banner & emoji burst
+            function showMagicPopup() {
+                const popup = document.getElementById("magicPopup");
+                if (!popup) return;
+
+                popup.classList.remove("show");
+                void popup.offsetWidth;
+                popup.classList.add("show");
+
+                clearTimeout(popup._timer);
+                popup._timer = setTimeout(function () {
+                    popup.classList.remove("show");
+                }, 2500);
+            }
+
+            function spawnMagicBurst(originX, originY) {
+                const emojis = ["✨", "🎉", "💖", "🎂", "🌟", "🥳", "💜"];
+                const count = 28;
+
+                for (let i = 0; i < count; i++) {
+                    const el = document.createElement("div");
+                    el.className = "magic-particle";
+                    el.textContent = emojis[i % emojis.length];
+
+                    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
+                    const distance = 90 + Math.random() * 150;
+                    const tx = Math.cos(angle) * distance;
+                    const ty = Math.sin(angle) * distance - 45;
+                    const rot = (i % 2 === 0 ? 1 : -1) * (180 + Math.random() * 200);
+
+                    el.style.left = originX + "px";
+                    el.style.top = originY + "px";
+                    el.style.setProperty("--tx", tx + "px");
+                    el.style.setProperty("--ty", ty + "px");
+                    el.style.setProperty("--rot", rot + "deg");
+
+                    document.body.appendChild(el);
+                    setTimeout(function () {
+                        if (el && el.parentNode) {
+                            el.parentNode.removeChild(el);
+                        }
+                    }, 1500);
+                }
+            }
+
+            function initMagicButton() {
+                const btn = document.getElementById("magicBtn");
+                if (!btn) return;
+
+                btn.addEventListener("click", function () {
+                    const rect = btn.getBoundingClientRect();
+                    const originX = rect.left + rect.width / 2;
+                    const originY = rect.top + rect.height / 2;
+
+                    const origLabel = btn.getAttribute("data-label") || btn.textContent;
+                    btn.setAttribute("data-label", origLabel);
+                    btn.textContent = "Magic Unleashed! 🎉";
+                    btn.classList.add("active-magic");
+
+                    clearTimeout(btn._resetTimer);
+                    btn._resetTimer = setTimeout(function () {
+                        btn.textContent = origLabel;
+                        btn.classList.remove("active-magic");
+                    }, 1800);
+
+                    showMagicPopup();
+                    spawnMagicBurst(originX, originY);
+                    runBuiltInConfetti(2500);
+                });
+            }
+
+            // Generate a short animated canvas stream for instant Demo Preview playback
+            function playCanvasDemo(videoEl, label, emoji, statusEl, demoBtn) {
+                if (!videoEl) return;
+
+                try {
+                    const offscreen = document.createElement("canvas");
+                    offscreen.width = 540;
+                    offscreen.height = 960;
+                    const octx = offscreen.getContext("2d");
+
+                    if (typeof offscreen.captureStream !== "function") {
+                        if (statusEl) statusEl.textContent = "Choose a local .mp4 file with 📁 Load Video to play.";
+                        return;
+                    }
+
+                    const stream = offscreen.captureStream(30);
+                    videoEl.srcObject = stream;
+                    videoEl.muted = true;
+                    videoEl.play().catch(function () {});
+
+                    if (demoBtn) demoBtn.classList.add("demo-active");
+                    if (statusEl) statusEl.textContent = "Playing Demo Preview: " + label;
+
+                    const start = Date.now();
+                    const duration = 5000;
+
+                    function drawFrame() {
+                        const now = Date.now();
+                        const t = (now - start) / duration;
+                        const pulse = Math.sin(now / 220) * 14;
+
+                        const grad = octx.createLinearGradient(0, 0, 540, 960);
+                        grad.addColorStop(0, "#090d16");
+                        grad.addColorStop(0.5, "#312e81");
+                        grad.addColorStop(1, "#7e22ce");
+                        octx.fillStyle = grad;
+                        octx.fillRect(0, 0, 540, 960);
+
+                        octx.fillStyle = "rgba(255,255,255,0.1)";
+                        octx.beginPath();
+                        octx.arc(270, 380 + pulse * 0.4, 130, 0, Math.PI * 2);
+                        octx.fill();
+
+                        octx.font = "110px sans-serif";
+                        octx.textAlign = "center";
+                        octx.fillText(emoji || "🎉", 270, 415 + pulse * 0.4);
+
+                        octx.fillStyle = "#ffffff";
+                        octx.font = "bold 40px sans-serif";
+                        octx.fillText("Happy Birthday Anjal!", 270, 580);
+
+                        octx.fillStyle = "#e9d5ff";
+                        octx.font = "28px sans-serif";
+                        octx.fillText(label || "Birthday Reel", 270, 635);
+
+                        // Progress bar
+                        octx.fillStyle = "rgba(255,255,255,0.2)";
+                        octx.fillRect(70, 740, 400, 10);
+                        octx.fillStyle = "#c084fc";
+                        octx.fillRect(70, 740, Math.min(400, 400 * t), 10);
+
+                        if (now - start < duration) {
+                            requestAnimationFrame(drawFrame);
+                        } else {
+                            videoEl.pause();
+                            if (demoBtn) demoBtn.classList.remove("demo-active");
+                            if (statusEl) statusEl.textContent = "Demo finished • Click Demo Preview or Load Video anytime";
+                        }
+                    }
+
+                    requestAnimationFrame(drawFrame);
+                } catch (err) {
+                    if (statusEl) statusEl.textContent = "Click 'Load Video' to pick your .mp4 file from your device.";
+                }
+            }
+
+            // Initialize video blocks, file pickers, and demo preview buttons
+            function initVideos() {
+                const blocks = document.querySelectorAll(".video-block");
+
+                blocks.forEach(function (block) {
+                    const video = block.querySelector("video");
+                    const status = block.querySelector(".video-status");
+                    const demoBtn = block.querySelector(".demo-btn");
+                    const fileInput = block.querySelector(".local-video-input");
+                    const label = block.getAttribute("data-label") || "Video";
+                    const emoji = block.getAttribute("data-demo-emoji") || "🎬";
+
+                    if (video && status) {
+                        video.addEventListener("loadedmetadata", function () {
+                            if (isFinite(video.duration) && video.duration > 0) {
+                                const mins = Math.floor(video.duration / 60);
+                                const secs = Math.round(video.duration % 60).toString().padStart(2, "0");
+                                status.textContent = "Ready • " + mins + ":" + secs;
+                            }
+                        });
+
+                        video.addEventListener("error", function () {
+                            if (!video.srcObject) {
+                                status.textContent = "Local file not in preview folder — try Demo Preview or Load Video.";
+                            }
+                        });
+                    }
+
+                    if (fileInput) {
+                        fileInput.addEventListener("change", function () {
+                            const file = fileInput.files && fileInput.files[0];
+                            if (!file || !video) return;
+                            video.srcObject = null;
+                            video.muted = false;
+                            video.src = URL.createObjectURL(file);
+                            video.load();
+                            video.play().catch(function () {});
+                            if (demoBtn) demoBtn.classList.remove("demo-active");
+                            if (status) status.textContent = "Playing local file: " + file.name;
+                        });
+                    }
+
+                    if (demoBtn) {
+                        demoBtn.addEventListener("click", function () {
+                            playCanvasDemo(video, label, emoji, status, demoBtn);
+                        });
+                    }
+                });
+            }
+
+            // Floating background emojis
+            function createBgElements() {
+                const canvas = document.getElementById("bg-canvas");
+                if (!canvas) return;
+                const items = ["⭐", "🌟", "🎂", "🥳", "🎉", "👑", "🚀", "🔥", "💖"];
+                const count = 28;
+
+                for (let i = 0; i < count; i++) {
+                    const el = document.createElement("div");
+                    el.className = "bg-item";
+                    el.textContent = items[i % items.length];
+                    el.style.left = (Math.random() * 100) + "vw";
+                    el.style.setProperty("--drift-duration", (12 + Math.random() * 18) + "s");
+                    el.style.setProperty("--drift-delay", (Math.random() * -15) + "s");
+                    el.style.fontSize = (0.85 + Math.random() * 0.9) + "rem";
+                    canvas.appendChild(el);
+                }
+            }
+
+            window.addEventListener("resize", function () {
+                const c = document.getElementById("confetti-canvas");
+                if (c) {
+                    c.width = window.innerWidth;
+                    c.height = window.innerHeight;
+                }
+            });
+
+            initImages();
+            initLightbox();
+            initCategories();
+            initMagicButton();
+            initVideos();
+            createBgElements();
+        })();
+    </script>
+</body>
+</html>
